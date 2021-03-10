@@ -1,0 +1,88 @@
+-- Let's have a look at our dataset 'spacemissions', which contains data about every space mission since 1957
+SELECT * FROM space_missions;
+
+--Notice there are two redundant columns: 'Column_0' & 'Unnamed__0' in the dataset.
+--Let's drop one column and rename the other as 'Serial_no' and use it as an index.
+
+--Dropping a column
+ALTER TABLE space_missions
+DROP COLUMN "Unnamed__0";
+
+--Renaming a column
+ALTER TABLE space_missions
+RENAME COLUMN "Column_0" TO "Serial_no";
+
+--Let's find the total space missions from 1957 till 2020
+SELECT COUNT(*) as "All_Space_Missions" FROM space_missions;
+
+--Let's find all the company names who conduct space missions
+SELECT DISTINCT("Company_Name") FROM space_missions;
+
+--Let's find the number of companies who are in this industry
+SELECT COUNT(DISTINCT("Company_Name")) as "Total Companies"  FROM space_missions;
+
+--Let's see which companies have the most space missions
+SELECT "Company_Name",COUNT("Company_Name") as "Total_Missions" 
+FROM space_missions 
+GROUP BY "Company_Name"
+ORDER BY "Total_Missions" DESC;
+
+--Let's find the companies which were active in 2020
+SELECT DISTINCT( "Company_Name") FROM space_missions 
+WHERE "Datum"  LIKE '%2020%';
+
+--Let's find space companies in usa
+SELECT "Company_Name" FROM space_missions
+WHERE "Location" LIKE '%USA'
+GROUP BY "Company_Name";
+
+--Let's find space companies in Russia
+SELECT "Company_Name" FROM space_missions
+WHERE "Location" LIKE '%Russia'
+GROUP BY "Company_Name";
+
+--Let's see how many missions are currently active
+SELECT COUNT(*) as "Active Missions" FROM space_missions  WHERE "Status_Rocket"='StatusActive';
+
+--Let's see how many missions have retired
+SELECT COUNT(*) FROM space_missions WHERE "Status_Rocket"='StatusRetired';
+
+--Let's check out the status of missions
+SELECT DISTINCT("Status_Mission") FROM space_missions;
+
+--Let's see the number of successful space missions till date
+SELECT COUNT("Status_Mission") as "Successful Missions"
+ FROM space_missions
+ WHERE "Status_Mission" = 'Success';
+
+--Let's see the number of unsuccessful space missions till date
+SELECT COUNT("Status_Mission") as "Failed Missions"
+ FROM space_missions
+ WHERE "Status_Mission" != 'Success';
+ 
+ --Let's see which companies usually failed in their missions
+ SELECT "Company_Name",COUNT("Status_Mission" ) as "Failures"
+ FROM space_missions
+ WHERE "Status_Mission" != 'Success'
+ GROUP BY "Company_Name"
+ ORDER BY "Failures" DESC;
+ 
+--Let's see the cost of most expensive mission till date
+SELECT MAX("Rocket") as "Most_Expensive" FROM space_missions;
+
+--Let's see the cost of the cheapest mission till date
+SELECT MIN("Rocket") as "Least_Expensive" FROM space_missions;
+
+SELECT DISTINCT("Company_Name") FROM space_missions WHERE "Rocket" = 450.00;
+SELECT DISTINCT("Company_Name") FROM space_missions WHERE "Rocket" = 5.30;
+
+
+--Let's see the average spending of companies on space missions from low to high
+SELECT "Company_Name", AVG("Rocket") as "Average_Spending" FROM space_missions
+GROUP BY "Company_Name"
+ORDER BY  AVG("Rocket");
+
+--Let's see the average spending of companies on space missions from high to low
+SELECT "Company_Name", AVG("Rocket") as "Average_Spending" FROM space_missions
+GROUP BY "Company_Name"
+ORDER BY  AVG("Rocket") DESC;
